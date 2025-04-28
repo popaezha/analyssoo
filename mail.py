@@ -4,27 +4,26 @@ import ru_core_news_md
 from textblob import TextBlob
 # from translate import Translator
 from googletrans import Translator
+import asyncio
 model = ru_core_news_md.load()
 
 
-
-text = model('Отличный фильм')
-textlist = [word .lemma_ for word in text]
-
+text = model(str(input()))
+textlist = [word.lemma_ for word in text]
 
 
+rutxt = ' '.join(textlist)
+
+async def transtxt(text):
+    translator = Translator()
+    eng_txt = await translator.translate(text, src='ru', dest='en')
 
 
-# erevod = Translator(from_lang='Russian', to_lang="English")
-# eng_txt = perevod.translate(ru_txt)
-# print(eng_txt)
+    return eng_txt
 
-perevod = Translator(proxy="https://translate.googleapis.com/translate_a/single")
-ru_txt = ' '.join(textlist)
-eng_txt = perevod.translate(ru_txt)
-print(eng_txt)
-
-res = TextBlob(eng_txt).sentiment.polarity
+eng_text_after_func = asyncio.run(transtxt(rutxt))
+print(eng_text_after_func.text)
+res = TextBlob(eng_text_after_func.text).sentiment.polarity
 print(res)
 
 if res > 0:
